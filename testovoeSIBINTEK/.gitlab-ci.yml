@@ -1,0 +1,22 @@
+stages:
+  - build
+  - integration_tests
+
+build_cat:
+  stage: build
+  script:
+    - cd cat/ && make
+  artifacts:
+    paths:
+      - ./cat/
+    expire_in: 30 days
+
+integration_tests:
+  stage: integration_tests
+  script:
+    - cd ./cat
+    - chmod +x test_func_cat.sh
+    - ./test_func_cat.sh > test_out_cat.txt || (cat test_out_cat.txt && exit 1)
+  dependencies:
+    - build_cat
+  allow_failure: false
